@@ -2,6 +2,7 @@ import { BACKEND_PORT } from './config.js';
 // A helper you may want to use when uploading new images to the server.
 import { fileToDataUrl } from './helpers.js';
 
+import {fetchRequest} from './request.js';
 
     //check if is already login 
 location.hash = '';
@@ -38,71 +39,6 @@ function showJobFound() {
     register.style.display = 'none';
     jobFound.style.display = 'flex';
 }
-
-
-// show the page based on the hash value in the url
-
-function onHashChange() {
-    const hash = window.location.hash;
-    const curPage = hash.replace('#', '');
-
-    switch(curPage) {
-        case 'login':{
-            showLogin();
-            break;
-        }
-        case 'register':{
-            showRegister();
-            break;
-        }
-        case 'job-found':{
-            showJobFound();
-            break;       
-        }     
-        default:{
-            isLogin ? showJobFound() : showJobFound();
-            break;
-        }
-    }
-}
-// load the page based on the hash value
-window.onhashchange = function(taget, event) {
-    onHashChange();
-}  
-//        window.onhashchange = onHashChange;
-
-// add event to the Sign in button in login page
-const submitsignIn = document.getElementById('submitSingin');
-submitsignIn.addEventListener('click', () => {
-    const loginEmail = document.getElementById('loginEmail').value;
-    const loginPassword = document.getElementById('loginPassword').value;
-    const postMethod = {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: loginEmail,
-            password: loginPassword
-        })
-    }
-
-    fetch('http://localhost:5005/auth/login', postMethod)
-    .then((Response) => {
-        Response.json()
-        .then((data) => {
-            if (data.error){
-                alert(data.error)
-            }else{
-                localStorage.setItem('token', data.token);
-                location.hash = '#job-found';
-            }
-        })
-    })
-    
-    
-})
-
 /*add event to the register button in register page
 1. checke the Email address is valid or not
 2. check the password and confirm password is the same or not
@@ -139,51 +75,75 @@ function verifyPassword(){
     return true
 }
 
-
-
-
+// check the form and post the request to the server
 const submitRegister = document.querySelector('#submitRegister');
 submitRegister.addEventListener('click', (event) => {
-    const registerName = document.getElementById('registerName').value;
-    const registerEmail = document.getElementById('registerEmail').value;
-    const registerPassword = document.getElementById('registerPassword').value;
-    console.log(registerName, registerEmail, registerPassword);
-
     if(!verifyEmail() || !verifyPassword() ){
         event.preventDefault();
     }else{
+        const payload = {
+            email: document.getElementById('registerEmail').value,
+            password: document.getElementById('registerPassword').value,
+            name: document.getElementById('registerName').value
 
-        const postMethod = {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: registerEmail,
-                password: registerPassword,
-                name: registerName
-            })
-        }
-
-        fetch('http://localhost:5005/auth/register', postMethod)
-        .then((Response) => {
-            Response.json()
-            .then((data) => {
-                if (data.error){
-                    alert(data.error)
-                }else{
-                    console.log('Success! the data is ', data);
-                    localStorage.setItem('token', data.token);
-                    location.hash = '#job-found';
-                    console.log('the user id is ', data.userId);
-                }
-            })
-        })
+        }    
+        fetchRequest('auth/register', 'POST', payload, (data)=>{
+            console.log('Success! the data is ', data);
+            localStorage.setItem('token', data.token);
+            location.hash = '#job-found';
+            console.log('the user id is ', data.userId);
+        });
     }
 })
 
+
+// add event to the Sign in button in login page
+const submitsignIn = document.getElementById('submitSingin');
+submitsignIn.addEventListener('click', () => {
+    const payload = {
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPassword').value
+    }
+    fetchRequest('auth/login', 'POST', payload,(data)=>{
+        localStorage.setItem('token', data.token);
+        location.hash = '#job-found';
+    });
+})
+
+//button to log out
 const logOut = document.querySelector('#logOut');
 logOut.addEventListener('click', () => {
     localStorage.removeItem('token');
     location.hash = '#login';
 })
+
+// show the page based on the hash value in the url
+
+function onHashChange() {
+    const hash = window.location.hash;
+    const curPage = hash.replace('#', '');
+
+    switch(curPage) {
+        case 'login':{
+            showLogin();
+            break;
+        }
+        case 'register':{
+            showRegister();
+            break;
+        }
+        case 'job-found':{
+            showJobFound();
+            break;       
+        }     
+        default:{
+            isLogin ? showJobFound() : showJobFound();
+            break;
+        }
+    }
+}
+
+// load the page based on the hash value
+window.onhashchange = function(taget, event) {
+    onHashChange();
+}  
