@@ -34,17 +34,18 @@
                   <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
                   <div class="form-floating">
-                    <input type="email" class="form-control " id="loginEmail" placeholder="name@example.com">
+                    <input required type="email" class="form-control " id="loginEmail" placeholder="name@example.com">
                     <label for="floatingInput">Email address</label>
                   </div>
                   <div class="form-floating">
-                    <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                    <input required type="password" class="form-control" id="loginPassword" placeholder="Password">
                     <label for="floatingPassword">Password</label>
                   </div>
               
                   <div class="checkbox mb-3">
                   </div>
-                  <button class="w-100 btn btn-lg btn-primary" id="submitSingin" type="submit">Sign in</button>
+                  <button type="button" class="w-100 btn btn-primary" id="submitSingin">Sign in</button>
+                  <!-- <button class="w-100 btn btn-lg btn-primary" id="submitSingin">Sign in</button> -->
                   <a href="#register">No Account? Register Now!</a>
                 </form>
             </div>
@@ -56,25 +57,27 @@
                   <img class="logo" src="./assets/icon/logo_rick.webp" alt="" width="72" height="57">
                   <h1 class="h3 mb-3 fw-normal">Be a new member Now!</h1>
                   <div class="form-floating">
-                    <input type="name" class="form-control" id="inputName" placeholder="name">
+                    <input  type="name" required class="form-control" id="registerName" placeholder="name">
                     <label for="floatingInput">Name</label>
                   </div>
                   <div class="form-floating">
-                    <input type="email" class="form-control" id="input email" placeholder="name@example.com">
+                    <input required type="email" class="form-control" id="registerEmail" placeholder="name@example.com">   
+                    <span style="color: red; margin-left: 4%; display: none;">Email is not valid</span>
                     <label for="floatingInput">Email address</label>
                   </div>
                   <div class="form-floating">
-                    <input style="margin-bottom: 0%;" type="password" class="form-control" id="inputPassword" placeholder="Password">
+                    <input required style="margin-bottom: 0%;" type="password" class="form-control" id="registerPassword" placeholder="Password">
                     <label for="floatingPassword">Password</label>
                   </div>
                   <div class="form-floating">
-                    <input type="Password" class="form-control" id="inputComfirmPassword" placeholder="Password">
+                    <input required type="Password" class="form-control" id="registerComfirmPassword" placeholder="Password">
+                    <span style="color: red; margin-left: 4%; display: none;">Passwords do not match!</span>
                     <label for="floatingPassword">ConfirmPassword</label>
                   </div>
               
                   <div class="checkbox mb-3">
                   </div>
-                  <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+                  <button type="button" class="w-100 btn btn-primary" id="submitRegister" style="margin-top: 0%;">Register</button>
                   
                   <a href="#login">Already have Account? Sign in Now!</a>
                 </form>
@@ -83,6 +86,8 @@
         <!-- This is page after login which is the job list -->
         <div class="page job-found" style="display: none;">
             THis is Job Found
+
+            <button id ='logOut'>log out</button>
         </div>
         <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
     </main>
@@ -92,100 +97,6 @@
     <!-- <footer>
         <p>&copy; lurkforwork.com 2022</p>
     </footer> -->
-    <!-- <script type="module" src="src/main.js"></script> -->
+    <script type="module" src="src/main.js"></script>
 </body>
-    <script>
-        //check if is already login 
-        function getToken(){
-            return localStorage.getItem('token'); 
-        }
-        const isLogin = !!getToken();
-
-        // get the diffent pages elements
-        const login = document.querySelector('.page.login');
-        const register = document.querySelector('.page.register');
-        const jobFound = document.querySelector('.page.job-found');
-
-        // add event listener to the window
-        function showLogin() {
-            login.style.display = 'flex';
-            register.style.display = 'none';
-            jobFound.style.display = 'none';
-        }
-
-        function showRegister() {
-            login.style.display = 'none';
-            register.style.display = 'flex';
-            jobFound.style.display = 'none';
-        }
-
-        function showJobFound() {
-            login.style.display = 'none';
-            register.style.display = 'none';
-            jobFound.style.display = 'flex';
-        }
-    
-
-        // show the page based on the hash value in the url
-        
-        function onHashChange() {
-            const hash = window.location.hash;
-            const curPage = hash.replace('#', '');
-            switch(curPage) {
-                case 'login':{
-                    showLogin();
-                    break;
-                }
-                case 'register':{
-                    showRegister();
-                    break;
-                }
-                case 'job-found':{
-                    showJobFound();
-                    break;       
-                }     
-                default:{
-                    isLogin ? showJobFound() : showLogin();
-                    break;
-                }
-            }
-        }
-        // load the page based on the hash value
-        window.onhashchange = onHashChange;
-
-
-        // add event to the Sign in button in login page
-        const submitsignIn = document.querySelector('#submitSingin');
-        submitsignIn.addEventListener('click', () => {
-            const loginEmail = document.getElementById('loginEmail').value;
-            const loginPassword = document.getElementById('loginPassword').value;
-            const postMethod = {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: loginEmail,
-                    password: loginPassword
-                })
-            }
-    
-            fetch('http://localhost:5005/auth/login', postMethod)
-            .then((Response) => {
-                Response.json()
-                .then((data) => {
-                    if (data.error){
-                        alert(data.error)
-                    }else{
-                        console.log('Success! the data is ', data);
-                        localStorage.setItem('token', data.token);
-                    }
-                })
-            })
-            Location.hash = '#job-found';
-            console.log(isLogin);
-            onHashChange();
-            
-        })
-    </script>
 </html>
