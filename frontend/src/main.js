@@ -194,17 +194,31 @@ function createAjobCard(data){
     jobPostTime.innerText = 'Post Time: ' + getTheRightTime(data.createdAt);
 
     // job start time
-
     const jobStartTime = document.createElement('p');
     jobStartTime.classList.add('fw-light')
     jobStartTime.innerText = 'Start Time: ' + data.start.slice(0,10);
 
     //number of Likes
     const numOfLikes = document.createElement('p');
+    numOfLikes.classList.add('fw-light')
+    numOfLikes.innerText = 'Likes: ' + data.likes.length;
+
+    const likesList = document.createElement('p');
+    likesList.classList.add('fw-light')
+    if (data.likes.length === 0){
+        likesList.innerText = 'No one likes this job';
+    }else{
+        likesList.innerText = data.likes + ' people like this job';
+    }
 
     //job description
     const jobDescription = document.createElement('p');
     jobDescription.innerText = data.description;
+
+    //comments
+    const comments = document.createElement('p');
+    comments.classList.add('fw-light')
+    comments.innerText = 'Comments: ' + data.comments.length;
 
 
 
@@ -212,7 +226,10 @@ function createAjobCard(data){
     jobBody.appendChild(jobCreaterName);
     jobBody.appendChild(jobPostTime)
     jobBody.appendChild(jobStartTime);
+    jobBody.appendChild(numOfLikes);
+    jobBody.appendChild(likesList);
     jobBody.appendChild(jobDescription);
+    jobBody.appendChild(comments);
     cardContainer.appendChild(img);
     cardContainer.appendChild(jobBody);
     jobListContainer.appendChild(cardContainer);    
