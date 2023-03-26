@@ -125,11 +125,11 @@ submitRegister.addEventListener('click', (event) => {
 
         }    
         fetchRequest('auth/register', 'POST', payload, (data)=>{
-            console.log('Success! the data is ', data);
+
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.userId);
             location.hash = '#job-found';
-            console.log('the user id is ', data.userId);
+
         });
     }
 })
@@ -172,7 +172,6 @@ function updatePosterName(jobId, createrId){
 
     fetchRequest(`user?userId=${createrId}`, 'GET', null, (data)=>{
 
-        console.log('the user Name is ', data.name);
         document.getElementById(`${jobId}-createrName`).innerText ='Poster: '+data.name;
 
 
@@ -182,13 +181,13 @@ function updatePosterName(jobId, createrId){
 //function to show the date/time
 function getTheRightTime(time){
     if(new Date(time).toDateString() === new Date().toDateString()){
-        console.log('the time is ', time.slice(11,16));
+
        return time.slice(11,16)
     }else{
         const yyyy = time.slice(0,4);
         const mm = time.slice(5,7);
         const dd = time.slice(8,10);
-        console.log('the date is ', dd +'/' + mm+ '/' + yyyy);
+
         return dd +'/' + mm+ '/' + yyyy
     }
 }
@@ -232,8 +231,6 @@ function createAjobCard(data){
         likesArray.push(data.likes[i].userId);
     }
 
-    console.log('the likes array is ', likesArray);
-    console.log('the user id is ', localStorage.getItem('userId'));
     likesArray.includes(Number(localStorage.getItem('userId'))) ? likeIcon.classList.add('bi-suit-heart-fill') : likeIcon.classList.add('bi-suit-heart');
 
 
@@ -241,7 +238,7 @@ function createAjobCard(data){
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('bi', 'bi-trash');
     
-    //update icon   ==============================================这里问题，绑定了modal，后面接submitbutton（updatejobBtn）， 但是id不一样 好像是因为我loading完了才绑定事件，麻烦老师了我去吃个饭回来继续==============
+    //update icon 
 
     const updateJobModal = new bootstrap.Modal(document.querySelector('#update-modal'));
     const updateIcon = document.createElement('i');
@@ -259,10 +256,9 @@ function createAjobCard(data){
         })
         
     }
-    console.log('正确的id ', data.id );
+
     updatejobBtn.onclick = function(){
 
-        console.log('错误的id '+ data.id);
         if (!updatejobImage.getAttribute('imgsrc')){
             alert('please choose a image!')
             return;
@@ -297,7 +293,7 @@ function createAjobCard(data){
                 id : data.id,
                 turnon: true
             }
-            console.log('i click ', data.id);
+
             fetchRequest(`job/like`, 'PUT', payload, (data)=>{
                 likeIcon.classList.remove('bi-suit-heart');
                 likeIcon.classList.add('bi-suit-heart-fill');
@@ -364,13 +360,12 @@ function createAjobCard(data){
     // Name click event
     jobCreaterName.onclick = function(){
         const  createrId = data.creatorId
-        console.log('the creater id is ', createrId);
+
 
         fetchRequest(`user?userId=${createrId}`, 'GET', null, (data)=>{           
             const contentContainer = document.querySelector('#job-creater-modal .content-container');
             const userName = data.name;
             contentContainer.innerText= 'User Name: ' + data.name + '\n' + 'User Email: ' + data.email + '\n' +'Jobs He Has: ' + '\n'
-            console.log('the user data ', data);
             data.jobs.forEach((data)=>{
                 
                 const colContainer = document.createElement('div');
@@ -483,6 +478,8 @@ function createAjobCard(data){
     const submitCommentBtn = document.querySelector('#submit-comment');    
 
 
+    
+
     submitCommentBtn.onclick = function(){
         const commentValue = document.querySelector('.add-comment-model textarea');
         console.log('the id im adding is ',addCommentIcon.getAttribute('belongsto') );
@@ -495,13 +492,12 @@ function createAjobCard(data){
             id: data.id,
             comment: commentValue.value
         }
+
         fetchRequest('job/comment', 'POST', payload, (data)=>{
             addCommentJobModal.hide();
-            window.location.hash = '';
             alert('comment added successfully');
         })
     }
-
 
         //comments number
     const commentsNum = document.createElement('p');
@@ -554,10 +550,9 @@ function fetchJobList(start){
         jobListContainer.textContent ='' // clear the job list
     }
     fetchRequest(`job/feed?start=${Number(start)}`, 'GET', null, (data)=>{
-        console.log('this user have those watchs with job', data);
+
         data.forEach(data => {
 
-            console.log('the user whatched job list is ', data);
             createAjobCard(data);
             });
     });
@@ -573,7 +568,7 @@ function fetchJobList(start){
 const myProfile = document.querySelector('#my-profile');
 myProfile.onclick = function(){
     const  createrId = localStorage.getItem('userId')
-    console.log('the creater id is ', createrId);
+
 
     fetchRequest(`user?userId=${createrId}`, 'GET', null, (data)=>{           
         const contentContainer = document.querySelector('#user-profie-modal .content-container');
@@ -650,7 +645,7 @@ const jobImage = document.querySelector('#formFile')
 jobImage.onchange = function(event){
     const file = event.target.files[0];
     fileToDataUrl(file).then((imgBase64)=>{
-        console.log('the img is ', imgBase64);
+
         jobImage.setAttribute('imgsrc', imgBase64)
         
     })
@@ -690,7 +685,6 @@ function scrollRefresh(){
     
     if (scrollTop + clientHeight + 1 >= scrollHeight && !!localStorage.getItem('token')) {
         // console.log('you are at the bottom of the page');
-        console.log('the job list container child count is ', jobListContainer.childElementCount);
         fetchJobList(jobListContainer.childElementCount)
     }
 }
