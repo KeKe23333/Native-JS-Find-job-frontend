@@ -1,4 +1,6 @@
-
+/* 
+Write by Ke Ww/z5158146. 
+*/
 import { BACKEND_PORT } from './config.js';
 // A helper you may want to use when uploading new images to the server.
 import { fileToDataUrl } from './helpers.js';
@@ -239,10 +241,50 @@ function createAjobCard(data){
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('bi', 'bi-trash');
     
-    //modifiy icon
-    const modifiyIcon = document.createElement('i');
-    modifiyIcon.classList.add('bi', 'bi-pencil-square');
+    //update icon
 
+    const updateJobModal = new bootstrap.Modal(document.querySelector('#update-modal'));
+    const updateIcon = document.createElement('i');
+    updateIcon.classList.add('bi', 'bi-pencil-square');
+    updateIcon.setAttribute('data-bs-toggle', 'modal');
+    updateIcon.setAttribute('data-bs-target', '#update-modal');
+
+    const updatejobImage = document.querySelector('#update-formFile')
+    const updatejobBtn = document.querySelector('#update-job');
+    updatejobImage.onchange = function(event){
+        const file = event.target.files[0];
+        fileToDataUrl(file).then((imgBase64)=>{;
+            updatejobImage.setAttribute('imgsrc', imgBase64)
+            
+        })
+        
+    }
+    updatejobBtn.onclick = function(){
+
+        console.log('the update job button is clicked and job id is '+ data.id);
+        if (!updatejobImage.getAttribute('imgsrc')){
+            alert('please choose a image!')
+            return;
+        }
+        const imgBase64 = updatejobImage.getAttribute('imgsrc');
+        const jobTitle = document.querySelector('.update-job .input-title').value;
+        const jobDescription = document.querySelector('.update-job .input-description').value;
+        const jobStartTime = new Date().toDateString();
+        const jobData = {
+            id: data.id,
+            title: jobTitle,
+            image: imgBase64,
+            description: jobDescription,
+            start: jobStartTime
+        }
+        fetchRequest('job', 'POST', jobData, (data)=>{
+            updateJobModal.hide();
+    
+            alert('Job change success!')
+            
+        });
+    }
+    
 
     //=====================Icon EVENT =======================
     //likeIcon EVENT
@@ -278,6 +320,11 @@ function createAjobCard(data){
 
     }
 
+    //updateIcon EVENT
+
+    updateIcon.onclick = function(){
+
+    }
 
     //deleteIcon EVENT
     deleteIcon.onclick = function(){
@@ -298,7 +345,7 @@ function createAjobCard(data){
 
 
     iconContainer.appendChild(likeIcon);
-    iconContainer.appendChild(modifiyIcon);
+    iconContainer.appendChild(updateIcon);
     iconContainer.appendChild(deleteIcon);
     titleContainer.appendChild(iconContainer);
     
@@ -330,6 +377,7 @@ function createAjobCard(data){
 
                 const cardContainer = document.createElement('div');
                 cardContainer.classList.add('card', 'shadow-sm');
+
 
                 const img = document.createElement('img');
                 img.src = data.image;
@@ -418,13 +466,46 @@ function createAjobCard(data){
     const jobDescription = document.createElement('p');
     jobDescription.classList.add('description')
     jobDescription.innerText = data.description;
+    //comments Conatiner
+    const commentsContainer = document.createElement('div');
+    commentsContainer.classList.add('comments-container','btn-group');
+    
+        //add comment icon
+    const addCommentIcon = document.createElement('i');
+    addCommentIcon.classList.add('bi', 'bi-plus-square-dotted');
+    addCommentIcon.setAttribute('data-bs-toggle', 'modal');
+    addCommentIcon.setAttribute('data-bs-target', '#comment-add-modal');
+    addCommentIcon.setAttribute('belongsto', data.id);
+        // add comment submit click event
+    const addCommentJobModal = new bootstrap.Modal(document.querySelector('#comment-add-modal'));
 
-    //comments number
+    const submitCommentBtn = document.querySelector('#submit-comment');    
+    submitCommentBtn.onclick = function(){
+        const commentValue = document.querySelector('.add-comment-model textarea');
+               
+        console.log('the id im adding is ',addCommentIcon.getAttribute('belongsto') );
+        if(commentValue.value==''){
+            alert('Please enter a comment');
+            return;
+        }
+
+        const payload = {
+            id: data.id,
+            comment: commentValue.value
+        }
+        fetchRequest('job/comment', 'POST', payload, (data)=>{
+            addCommentJobModal.hide();
+            alert('comment added successfully');
+        })
+    }
+
+
+        //comments number
     const commentsNum = document.createElement('p');
     commentsNum.classList.add('fw-light')
     commentsNum.innerText = 'Comments: ' + data.comments.length;
 
-    // Comments list
+        // Comments list
 
     const commentsList = document.createElement('ul');
     commentsList.classList.add('list-group', 'list-group-flush');
@@ -445,8 +526,10 @@ function createAjobCard(data){
     jobBody.appendChild(numOfLikes);
     jobBody.appendChild(likesList);
     jobBody.appendChild(jobDescription);
-    jobBody.appendChild(commentsNum);
-    jobBody.appendChild(commentsList);
+    commentsContainer.appendChild(commentsNum);
+    commentsContainer.appendChild(addCommentIcon);
+    jobBody.appendChild(commentsContainer);
+    jobBody.appendChild(commentsList)
     cardContainer.appendChild(img);
     cardContainer.appendChild(jobBody);
     jobListContainer.appendChild(cardContainer);    

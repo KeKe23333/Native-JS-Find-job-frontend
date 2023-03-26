@@ -105,3 +105,13 @@ i.bi{
   text-decoration: underline;
   
 }
+.comments-container{
+  width: 100%;
+  display: flex; 
+  position: relative;
+}
+.bi-plus-square-dotted{
+  position  : absolute;
+  bottom: 5px;
+  right: 5px;
+}
