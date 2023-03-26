@@ -88,3 +88,20 @@ body {
 .fst-italic{
   margin-bottom: 0%;
 }
+.descreption{
+  margin-bottom: 1%;
+}
+
+.list-group-item{
+  font-size: 1ch;
+}
+i.bi{
+  cursor:pointer;
+  margin-left: 10px;
+}
+.fst-italic{
+  cursor:pointer;
+  color: blue;
+  text-decoration: underline;
+  
+}
