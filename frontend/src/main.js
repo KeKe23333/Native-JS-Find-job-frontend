@@ -241,7 +241,7 @@ function createAjobCard(data){
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('bi', 'bi-trash');
     
-    //update icon
+    //update icon   ==============================================这里问题，绑定了modal，后面接submitbutton（updatejobBtn）， 但是id不一样 好像是因为我loading完了才绑定事件，麻烦老师了我去吃个饭回来继续==============
 
     const updateJobModal = new bootstrap.Modal(document.querySelector('#update-modal'));
     const updateIcon = document.createElement('i');
@@ -259,9 +259,10 @@ function createAjobCard(data){
         })
         
     }
+    console.log('正确的id ', data.id );
     updatejobBtn.onclick = function(){
 
-        console.log('the update job button is clicked and job id is '+ data.id);
+        console.log('错误的id '+ data.id);
         if (!updatejobImage.getAttribute('imgsrc')){
             alert('please choose a image!')
             return;
@@ -279,7 +280,7 @@ function createAjobCard(data){
         }
         fetchRequest('job', 'POST', jobData, (data)=>{
             updateJobModal.hide();
-    
+            window.location.hash = '';
             alert('Job change success!')
             
         });
@@ -480,9 +481,10 @@ function createAjobCard(data){
     const addCommentJobModal = new bootstrap.Modal(document.querySelector('#comment-add-modal'));
 
     const submitCommentBtn = document.querySelector('#submit-comment');    
+
+
     submitCommentBtn.onclick = function(){
         const commentValue = document.querySelector('.add-comment-model textarea');
-               
         console.log('the id im adding is ',addCommentIcon.getAttribute('belongsto') );
         if(commentValue.value==''){
             alert('Please enter a comment');
@@ -495,6 +497,7 @@ function createAjobCard(data){
         }
         fetchRequest('job/comment', 'POST', payload, (data)=>{
             addCommentJobModal.hide();
+            window.location.hash = '';
             alert('comment added successfully');
         })
     }
@@ -671,7 +674,7 @@ uploadJob.onclick = function(){
     }
     fetchRequest('job', 'POST', jobData, (data)=>{
         uploadJobModal.hide();
-
+        window.location.hash = '';
         alert('Job created success!')
         
     });
