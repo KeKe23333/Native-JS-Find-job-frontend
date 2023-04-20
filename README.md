@@ -1,3 +1,9 @@
+# 原生JS 实现的一个简单的找工作的页面
+原生 JS 练习自己操作dom， 巩固理论知识， 熟悉JS 基本语法。 实现基本的 关注评论，增删改查工作.
+
+## 使用
+npm install, npm start， 不再赘述
+
 # Assessment 3 - Vanilla JS: LurkForWork
 
 1. Background & Motivation
